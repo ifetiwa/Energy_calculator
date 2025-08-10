@@ -1,0 +1,83 @@
+import { type Appliance } from "@shared/schema";
+
+export const defaultAppliances: Omit<Appliance, 'id'>[] = [
+  {
+    name: "Television 50\"",
+    rating: 150,
+    backupTime: 6.0,
+    units: 2,
+    daysPerWeek: 7,
+    daysPerMonth: 30,
+  },
+  {
+    name: "1.5Hp Air Conditioner",
+    rating: 1200,
+    backupTime: 6.0,
+    units: 1,
+    daysPerWeek: 7,
+    daysPerMonth: 30,
+  },
+  {
+    name: "Laptop",
+    rating: 90,
+    backupTime: 6.0,
+    units: 1,
+    daysPerWeek: 7,
+    daysPerMonth: 30,
+  },
+  {
+    name: "10W LED Light Bulb",
+    rating: 10,
+    backupTime: 6.0,
+    units: 15,
+    daysPerWeek: 7,
+    daysPerMonth: 30,
+  },
+  {
+    name: "Fridge Medium",
+    rating: 150,
+    backupTime: 6.0,
+    units: 1,
+    daysPerWeek: 7,
+    daysPerMonth: 30,
+  },
+  {
+    name: "WiFi Modem",
+    rating: 25,
+    backupTime: 6.0,
+    units: 1,
+    daysPerWeek: 7,
+    daysPerMonth: 30,
+  },
+  {
+    name: "Mobile Phone Charger",
+    rating: 15,
+    backupTime: 6.0,
+    units: 6,
+    daysPerWeek: 7,
+    daysPerMonth: 30,
+  },
+  {
+    name: "Fan Ceiling",
+    rating: 80,
+    backupTime: 6.0,
+    units: 3,
+    daysPerWeek: 7,
+    daysPerMonth: 30,
+  },
+];
+
+export const applianceOptions = [
+  { value: "tv-50", label: "Television 50\"", rating: 150 },
+  { value: "ac-1.5hp", label: "1.5Hp Air Conditioner", rating: 1200 },
+  { value: "laptop", label: "Laptop", rating: 90 },
+  { value: "led-10w", label: "10W LED Light Bulb", rating: 10 },
+  { value: "fridge", label: "Fridge Medium", rating: 150 },
+  { value: "wifi", label: "WiFi Modem", rating: 25 },
+  { value: "charger", label: "Mobile Phone Charger", rating: 15 },
+  { value: "fan", label: "Fan Ceiling", rating: 80 },
+  { value: "washing-machine", label: "Washing Machine", rating: 500 },
+  { value: "microwave", label: "Microwave", rating: 1000 },
+  { value: "kettle", label: "Electric Kettle", rating: 1500 },
+  { value: "iron", label: "Electric Iron", rating: 1200 },
+];
