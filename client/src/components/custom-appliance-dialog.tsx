@@ -52,14 +52,11 @@ export function CustomApplianceDialog({ onApplianceCreated }: CustomApplianceDia
     setIsSubmitting(true);
     
     try {
-      console.log('Creating custom appliance:', { name: name.trim(), rating, category });
       const newAppliance = addCustomAppliance({
         name: name.trim(),
         rating,
         category,
       });
-
-      console.log('Custom appliance created:', newAppliance);
       onApplianceCreated?.(newAppliance);
       
       // Reset form

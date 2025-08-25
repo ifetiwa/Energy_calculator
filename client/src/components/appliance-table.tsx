@@ -25,10 +25,7 @@ export function ApplianceTable({ appliances, costPerKwh, onAppliancesChange }: A
   
   // Recalculate options whenever custom appliances change
   const allApplianceOptions = React.useMemo(() => {
-    console.log('Recalculating appliance options with custom appliances:', customAppliances);
-    const options = getAllApplianceOptions(customAppliances);
-    console.log('All appliance options:', options);
-    return options;
+    return getAllApplianceOptions(customAppliances);
   }, [customAppliances]);
   const addAppliance = () => {
     const newAppliance: Appliance = {
@@ -124,10 +121,7 @@ export function ApplianceTable({ appliances, costPerKwh, onAppliancesChange }: A
           <div className="space-y-3">
             <CustomApplianceDialog 
               onApplianceCreated={(appliance) => {
-                // Force a small delay to ensure the hook state updates
-                setTimeout(() => {
-                  quickAddAppliance(appliance.name, appliance.rating);
-                }, 100);
+                quickAddAppliance(appliance.name, appliance.rating);
               }}
             />
             <div className="flex justify-center">
@@ -172,6 +166,7 @@ export function ApplianceTable({ appliances, costPerKwh, onAppliancesChange }: A
                       <TableCell className="text-sm">{index + 1}</TableCell>
                       <TableCell>
                         <Select
+                          key={`${appliance.id}-${customAppliances.length}`}
                           value={appliance.name}
                           onValueChange={(value) => {
                             const option = allApplianceOptions.find(opt => opt.label === value);

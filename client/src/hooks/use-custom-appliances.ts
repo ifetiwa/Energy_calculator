@@ -14,22 +14,37 @@ export function useCustomAppliances() {
 
   // Load custom appliances from localStorage on mount
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        setCustomAppliances(Array.isArray(parsed) ? parsed : []);
+    const loadCustomAppliances = () => {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed)) {
+            setCustomAppliances(parsed);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading custom appliances:', error);
+        setCustomAppliances([]);
       }
-    } catch (error) {
-      console.error('Error loading custom appliances:', error);
-      setCustomAppliances([]);
-    }
+    };
+
+    loadCustomAppliances();
+    
+    // Also listen for storage events to sync across tabs
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY) {
+        loadCustomAppliances();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   // Save to localStorage whenever custom appliances change
   useEffect(() => {
     try {
-      console.log('Saving to localStorage:', customAppliances);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(customAppliances));
     } catch (error) {
       console.error('Error saving custom appliances:', error);
@@ -42,12 +57,7 @@ export function useCustomAppliances() {
       id: `custom-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     };
     
-    console.log('Adding custom appliance:', newAppliance);
-    setCustomAppliances(prev => {
-      const updated = [...prev, newAppliance];
-      console.log('Updated custom appliances:', updated);
-      return updated;
-    });
+    setCustomAppliances(prev => [...prev, newAppliance]);
     return newAppliance;
   };
 
