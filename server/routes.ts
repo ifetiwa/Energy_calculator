@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { getDatabaseStorage } from "./database";
 import { insertCalculationSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -8,6 +8,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all calculations
   app.get("/api/calculations", async (req, res) => {
     try {
+      const storage = await getDatabaseStorage();
       const calculations = await storage.getCalculations();
       res.json(calculations);
     } catch (error) {
@@ -19,6 +20,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/calculations/:id", async (req, res) => {
     try {
       const { id } = req.params;
+      const storage = await getDatabaseStorage();
       const calculation = await storage.getCalculation(id);
       
       if (!calculation) {
@@ -35,6 +37,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/calculations", async (req, res) => {
     try {
       const validatedData = insertCalculationSchema.parse(req.body);
+      const storage = await getDatabaseStorage();
       const calculation = await storage.createCalculation(validatedData);
       res.status(201).json(calculation);
     } catch (error) {
@@ -50,6 +53,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { id } = req.params;
       const updates = insertCalculationSchema.partial().parse(req.body);
+      const storage = await getDatabaseStorage();
       const calculation = await storage.updateCalculation(id, updates);
       
       if (!calculation) {
@@ -69,6 +73,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/calculations/:id", async (req, res) => {
     try {
       const { id } = req.params;
+      const storage = await getDatabaseStorage();
       const deleted = await storage.deleteCalculation(id);
       
       if (!deleted) {
