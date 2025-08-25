@@ -4,10 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, Tv, Snowflake, Laptop, Lightbulb } from "lucide-react";
 import { type Appliance } from "@shared/schema";
-import { applianceOptions } from "@/data/appliances";
+import { getAllApplianceOptions, applianceOptions } from "@/data/appliances";
 import { calculateApplianceConsumption, formatCurrency, formatNumber } from "@/lib/calculations";
+import { useCustomAppliances } from "@/hooks/use-custom-appliances";
+import { CustomApplianceDialog } from "./custom-appliance-dialog";
+import { ManageCustomAppliances } from "./manage-custom-appliances";
 
 interface ApplianceTableProps {
   appliances: Appliance[];
@@ -16,6 +21,8 @@ interface ApplianceTableProps {
 }
 
 export function ApplianceTable({ appliances, costPerKwh, onAppliancesChange }: ApplianceTableProps) {
+  const { customAppliances } = useCustomAppliances();
+  const allApplianceOptions = getAllApplianceOptions(customAppliances);
   const addAppliance = () => {
     const newAppliance: Appliance = {
       id: `appliance-${Date.now()}`,
@@ -67,11 +74,12 @@ export function ApplianceTable({ appliances, costPerKwh, onAppliancesChange }: A
         </CardHeader>
         <CardContent>
           {/* Quick Add Popular Appliances */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
             <Button
               variant="outline"
               className="p-3 h-auto flex-col space-y-1"
               onClick={() => quickAddAppliance("Television 50\"", 150)}
+              data-testid="button-quick-add-tv"
             >
               <Tv className="w-5 h-5 text-muted-foreground" />
               <span className="text-xs">Television</span>
@@ -80,6 +88,7 @@ export function ApplianceTable({ appliances, costPerKwh, onAppliancesChange }: A
               variant="outline"
               className="p-3 h-auto flex-col space-y-1"
               onClick={() => quickAddAppliance("1.5Hp Air Conditioner", 1200)}
+              data-testid="button-quick-add-ac"
             >
               <Snowflake className="w-5 h-5 text-muted-foreground" />
               <span className="text-xs">AC Unit</span>
@@ -88,6 +97,7 @@ export function ApplianceTable({ appliances, costPerKwh, onAppliancesChange }: A
               variant="outline"
               className="p-3 h-auto flex-col space-y-1"
               onClick={() => quickAddAppliance("Laptop", 90)}
+              data-testid="button-quick-add-laptop"
             >
               <Laptop className="w-5 h-5 text-muted-foreground" />
               <span className="text-xs">Laptop</span>
@@ -96,10 +106,23 @@ export function ApplianceTable({ appliances, costPerKwh, onAppliancesChange }: A
               variant="outline"
               className="p-3 h-auto flex-col space-y-1"
               onClick={() => quickAddAppliance("10W LED Light Bulb", 10)}
+              data-testid="button-quick-add-lights"
             >
               <Lightbulb className="w-5 h-5 text-muted-foreground" />
               <span className="text-xs">LED Lights</span>
             </Button>
+          </div>
+
+          {/* Custom Appliance Management */}
+          <div className="space-y-3">
+            <CustomApplianceDialog 
+              onApplianceCreated={(appliance) => {
+                quickAddAppliance(appliance.name, appliance.rating);
+              }}
+            />
+            <div className="flex justify-center">
+              <ManageCustomAppliances />
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -141,22 +164,53 @@ export function ApplianceTable({ appliances, costPerKwh, onAppliancesChange }: A
                         <Select
                           value={appliance.name}
                           onValueChange={(value) => {
-                            const option = applianceOptions.find(opt => opt.label === value);
+                            const option = allApplianceOptions.find(opt => opt.label === value);
                             updateAppliance(appliance.id, { 
                               name: value,
                               rating: option?.rating || appliance.rating
                             });
                           }}
                         >
-                          <SelectTrigger className="w-full">
+                          <SelectTrigger className="w-full" data-testid={`select-appliance-${appliance.id}`}>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {applianceOptions.map((option) => (
+                            {/* Default Appliances */}
+                            {allApplianceOptions.filter(opt => !opt.isCustom).map((option) => (
                               <SelectItem key={option.value} value={option.label}>
-                                {option.label}
+                                <div className="flex items-center justify-between w-full">
+                                  <span>{option.label}</span>
+                                  <Badge variant="outline" className="ml-2 text-xs">
+                                    {option.rating}W
+                                  </Badge>
+                                </div>
                               </SelectItem>
                             ))}
+                            
+                            {/* Custom Appliances */}
+                            {allApplianceOptions.filter(opt => opt.isCustom).length > 0 && (
+                              <>
+                                <Separator className="my-2" />
+                                <div className="px-2 py-1 text-xs font-medium text-muted-foreground">
+                                  Custom Appliances
+                                </div>
+                                {allApplianceOptions.filter(opt => opt.isCustom).map((option) => (
+                                  <SelectItem key={option.value} value={option.label}>
+                                    <div className="flex items-center justify-between w-full">
+                                      <span>{option.label}</span>
+                                      <div className="flex items-center space-x-1">
+                                        <Badge variant="outline" className="text-xs">
+                                          {option.rating}W
+                                        </Badge>
+                                        <Badge variant="secondary" className="text-xs">
+                                          Custom
+                                        </Badge>
+                                      </div>
+                                    </div>
+                                  </SelectItem>
+                                ))}
+                              </>
+                            )}
                           </SelectContent>
                         </Select>
                       </TableCell>

@@ -68,16 +68,34 @@ export const defaultAppliances: Omit<Appliance, 'id'>[] = [
 ];
 
 export const applianceOptions = [
-  { value: "tv-50", label: "Television 50\"", rating: 150 },
-  { value: "ac-1.5hp", label: "1.5Hp Air Conditioner", rating: 1200 },
-  { value: "laptop", label: "Laptop", rating: 90 },
-  { value: "led-10w", label: "10W LED Light Bulb", rating: 10 },
-  { value: "fridge", label: "Fridge Medium", rating: 150 },
-  { value: "wifi", label: "WiFi Modem", rating: 25 },
-  { value: "charger", label: "Mobile Phone Charger", rating: 15 },
-  { value: "fan", label: "Fan Ceiling", rating: 80 },
-  { value: "washing-machine", label: "Washing Machine", rating: 500 },
-  { value: "microwave", label: "Microwave", rating: 1000 },
-  { value: "kettle", label: "Electric Kettle", rating: 1500 },
-  { value: "iron", label: "Electric Iron", rating: 1200 },
+  { value: "tv-50", label: "Television 50\"", rating: 150, category: "Entertainment" },
+  { value: "ac-1.5hp", label: "1.5Hp Air Conditioner", rating: 1200, category: "Cooling & Heating" },
+  { value: "laptop", label: "Laptop", rating: 90, category: "Computing" },
+  { value: "led-10w", label: "10W LED Light Bulb", rating: 10, category: "Lighting" },
+  { value: "fridge", label: "Fridge Medium", rating: 150, category: "Kitchen Appliances" },
+  { value: "wifi", label: "WiFi Modem", rating: 25, category: "Computing" },
+  { value: "charger", label: "Mobile Phone Charger", rating: 15, category: "Personal Care" },
+  { value: "fan", label: "Fan Ceiling", rating: 80, category: "Cooling & Heating" },
+  { value: "washing-machine", label: "Washing Machine", rating: 500, category: "Cleaning" },
+  { value: "microwave", label: "Microwave", rating: 1000, category: "Kitchen Appliances" },
+  { value: "kettle", label: "Electric Kettle", rating: 1500, category: "Kitchen Appliances" },
+  { value: "iron", label: "Electric Iron", rating: 1200, category: "Personal Care" },
 ];
+
+// Helper function to get all appliance options (default + custom)
+export function getAllApplianceOptions(customAppliances: any[] = []) {
+  const defaultOptions = applianceOptions.map(option => ({
+    ...option,
+    isCustom: false,
+  }));
+
+  const customOptions = customAppliances.map(appliance => ({
+    value: appliance.id,
+    label: appliance.name,
+    rating: appliance.rating,
+    category: appliance.category || "Other",
+    isCustom: true,
+  }));
+
+  return [...defaultOptions, ...customOptions];
+}
