@@ -29,6 +29,7 @@ export function useCustomAppliances() {
   // Save to localStorage whenever custom appliances change
   useEffect(() => {
     try {
+      console.log('Saving to localStorage:', customAppliances);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(customAppliances));
     } catch (error) {
       console.error('Error saving custom appliances:', error);
@@ -41,7 +42,12 @@ export function useCustomAppliances() {
       id: `custom-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     };
     
-    setCustomAppliances(prev => [...prev, newAppliance]);
+    console.log('Adding custom appliance:', newAppliance);
+    setCustomAppliances(prev => {
+      const updated = [...prev, newAppliance];
+      console.log('Updated custom appliances:', updated);
+      return updated;
+    });
     return newAppliance;
   };
 

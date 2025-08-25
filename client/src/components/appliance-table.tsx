@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,14 @@ interface ApplianceTableProps {
 
 export function ApplianceTable({ appliances, costPerKwh, onAppliancesChange }: ApplianceTableProps) {
   const { customAppliances } = useCustomAppliances();
-  const allApplianceOptions = getAllApplianceOptions(customAppliances);
+  
+  // Recalculate options whenever custom appliances change
+  const allApplianceOptions = React.useMemo(() => {
+    console.log('Recalculating appliance options with custom appliances:', customAppliances);
+    const options = getAllApplianceOptions(customAppliances);
+    console.log('All appliance options:', options);
+    return options;
+  }, [customAppliances]);
   const addAppliance = () => {
     const newAppliance: Appliance = {
       id: `appliance-${Date.now()}`,
@@ -117,7 +124,10 @@ export function ApplianceTable({ appliances, costPerKwh, onAppliancesChange }: A
           <div className="space-y-3">
             <CustomApplianceDialog 
               onApplianceCreated={(appliance) => {
-                quickAddAppliance(appliance.name, appliance.rating);
+                // Force a small delay to ensure the hook state updates
+                setTimeout(() => {
+                  quickAddAppliance(appliance.name, appliance.rating);
+                }, 100);
               }}
             />
             <div className="flex justify-center">
