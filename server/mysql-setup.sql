@@ -59,6 +59,49 @@ INSERT INTO calculations (name, location, cost_per_kwh, appliances) VALUES
             'daysPerMonth', 30
         )
     )
+),
+(
+    'Industrial Workshop Calculation',
+    'Lagos',
+    225.00,
+    JSON_ARRAY(
+        JSON_OBJECT(
+            'id', 'industrial-1',
+            'name', 'Straight Sewing Machine',
+            'rating', 370,
+            'backupTime', 8.0,
+            'units', 3,
+            'daysPerWeek', 6,
+            'daysPerMonth', 26
+        ),
+        JSON_OBJECT(
+            'id', 'industrial-2',
+            'name', 'Weaving Machine',
+            'rating', 476,
+            'backupTime', 8.0,
+            'units', 2,
+            'daysPerWeek', 6,
+            'daysPerMonth', 26
+        ),
+        JSON_OBJECT(
+            'id', 'industrial-3',
+            'name', 'Desktop Computer',
+            'rating', 250,
+            'backupTime', 8.0,
+            'units', 1,
+            'daysPerWeek', 6,
+            'daysPerMonth', 26
+        ),
+        JSON_OBJECT(
+            'id', 'industrial-4',
+            'name', 'Printing Machine',
+            'rating', 1200,
+            'backupTime', 4.0,
+            'units', 1,
+            'daysPerWeek', 6,
+            'daysPerMonth', 26
+        )
+    )
 );
 
 -- Create user for the application (replace 'your_password' with a secure password)
