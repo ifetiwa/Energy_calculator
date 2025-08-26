@@ -54,7 +54,7 @@ export class MySQLStorage implements IStorage {
       id: calc.id,
       name: calc.name,
       location: calc.location,
-      costPerKwh: parseFloat(calc.cost_per_kwh.toString()),
+      costPerKwh: calc.cost_per_kwh.toString(),
       appliances: JSON.parse(calc.appliances || '[]'),
       createdAt: calc.created_at?.toISOString() || null,
     };
@@ -70,7 +70,7 @@ export class MySQLStorage implements IStorage {
       id: calc.id,
       name: calc.name,
       location: calc.location,
-      costPerKwh: parseFloat(calc.cost_per_kwh.toString()),
+      costPerKwh: calc.cost_per_kwh.toString(),
       appliances: JSON.parse(calc.appliances || '[]'),
       createdAt: calc.created_at?.toISOString() || null,
     }));
@@ -173,6 +173,5 @@ export function createMySQLConfig(): mysql.ConnectionOptions {
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_NAME || 'vectis_energy',
     connectTimeout: 30000,
-    acquireTimeout: 30000,
   };
 }
