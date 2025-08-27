@@ -1,14 +1,14 @@
 import { sql } from "drizzle-orm";
-import { mysqlTable, text, varchar, decimal, int, timestamp, json } from "drizzle-orm/mysql-core";
+import { pgTable, text, varchar, decimal, timestamp, jsonb, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const calculations = mysqlTable("calculations", {
-  id: varchar("id", { length: 36 }).primaryKey().default(sql`(UUID())`),
+export const calculations = pgTable("calculations", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
   location: text("location").notNull().default("Abuja"),
   costPerKwh: decimal("cost_per_kwh", { precision: 10, scale: 2 }).notNull().default("225.00"),
-  appliances: json("appliances").notNull().default("[]"),
+  appliances: jsonb("appliances").notNull().default("[]"),
   // User contact fields
   customerName: text("customer_name"),
   customerEmail: text("customer_email"),

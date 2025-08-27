@@ -4,6 +4,8 @@
 
 VECTIS is a web-based energy consumption calculator that helps users estimate their household appliance power usage and associated costs. The application allows users to input various appliances with their specifications (wattage, usage hours, frequency) and calculates daily, weekly, and monthly energy consumption along with cost projections. The system is designed to help Nigerian households optimize their energy usage and reduce electricity bills.
 
+**Deployment Status**: Ready for Vercel deployment with Neon PostgreSQL database. Customer information collection and database integration completed.
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
@@ -26,10 +28,11 @@ Preferred communication style: Simple, everyday language.
 - **Error Handling**: Centralized error handling middleware with structured error responses
 
 ### Data Storage Solutions
-- **Current**: In-memory storage (MemStorage class) for development/testing
-- **Configured**: Drizzle ORM with PostgreSQL schema definition ready for production deployment
-- **Schema**: Calculations table with appliance data stored as JSON arrays
-- **Migration**: Drizzle Kit configured for database migrations
+- **Production**: Neon PostgreSQL serverless database with customer information fields
+- **Development**: In-memory storage (MemStorage class) for local testing
+- **Schema**: PostgreSQL calculations table with appliance data (JSONB) and customer contact fields
+- **API**: Vercel serverless functions for database operations (api/calculations.js)
+- **Migration**: Drizzle Kit configured for PostgreSQL migrations
 
 ### Authentication and Authorization
 - **Current State**: No authentication implemented (calculator operates without user accounts)
@@ -72,10 +75,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Deployment Configuration
 
-### cPanel Deployment Ready
-- **Database**: MySQL schema and setup scripts prepared (`server/mysql-setup.sql`)
-- **Build Scripts**: Production build creates `dist/` and `client/dist/` folders
-- **Environment**: `.env.example` template with all required variables
-- **Documentation**: Complete deployment guides and checklists created
-- **Startup File**: `dist/index.js` configured for cPanel Node.js apps
-- **Dependencies**: Production-only package configuration prepared
+### Vercel Deployment Ready
+- **Database**: Neon PostgreSQL serverless database with customer fields
+- **API Routes**: Vercel serverless functions in `api/` folder
+- **Frontend**: Static build optimized for Vercel CDN
+- **Environment**: DATABASE_URL configuration for Neon connection
+- **Documentation**: Step-by-step Vercel deployment guide created
+- **Build Process**: `vite build` creates optimized static files
+- **Global Performance**: Edge functions for worldwide low latency
+
+### Previous cPanel Attempt (Deprecated)
+- MySQL setup attempted but incompatible with modern serverless architecture
+- Traditional server requirements don't match current serverless best practices
+- Migrated to Vercel for better scalability and developer experience
