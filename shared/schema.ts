@@ -9,6 +9,10 @@ export const calculations = mysqlTable("calculations", {
   location: text("location").notNull().default("Abuja"),
   costPerKwh: decimal("cost_per_kwh", { precision: 10, scale: 2 }).notNull().default("225.00"),
   appliances: json("appliances").notNull().default("[]"),
+  // User contact fields
+  customerName: text("customer_name"),
+  customerEmail: text("customer_email"),
+  customerPhone: text("customer_phone"),
   createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
 

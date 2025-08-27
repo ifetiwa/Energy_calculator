@@ -16,6 +16,9 @@ CREATE TABLE IF NOT EXISTS calculations (
     location TEXT NOT NULL DEFAULT 'Abuja',
     cost_per_kwh DECIMAL(10,2) NOT NULL DEFAULT 225.00,
     appliances JSON NOT NULL DEFAULT (JSON_ARRAY()),
+    customer_name TEXT,
+    customer_email TEXT,
+    customer_phone TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -101,7 +104,10 @@ INSERT INTO calculations (name, location, cost_per_kwh, appliances) VALUES
             'daysPerWeek', 6,
             'daysPerMonth', 26
         )
-    )
+    ),
+    'Textile Manufacturing Co.',
+    'contact@textile-mfg.com',
+    '+234-801-234-5678'
 );
 
 -- Create user for the application (replace 'your_password' with a secure password)

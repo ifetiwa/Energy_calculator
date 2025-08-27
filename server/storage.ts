@@ -27,9 +27,15 @@ export class MemStorage implements IStorage {
   async createCalculation(insertCalculation: InsertCalculation): Promise<Calculation> {
     const id = randomUUID();
     const calculation: Calculation = {
-      ...insertCalculation,
       id,
-      createdAt: new Date().toISOString(),
+      name: insertCalculation.name,
+      location: insertCalculation.location || "Abuja",
+      costPerKwh: insertCalculation.costPerKwh || "225.00",
+      appliances: insertCalculation.appliances || [],
+      customerName: insertCalculation.customerName || null,
+      customerEmail: insertCalculation.customerEmail || null,
+      customerPhone: insertCalculation.customerPhone || null,
+      createdAt: null,
     };
     this.calculations.set(id, calculation);
     return calculation;
