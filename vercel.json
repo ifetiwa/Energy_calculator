@@ -1,11 +1,12 @@
 {
   "version": 2,
   "buildCommand": "npm run build && mkdir -p server/public && cp -r dist/public/* server/public/",
-  "functions": {
-    "api/index.ts": {
-      "runtime": "@vercel/node@3.0.21"
+  "builds": [
+    {
+      "src": "api/index.ts",
+      "use": "@vercel/node@2.15.10"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/(.*)",
