@@ -31,6 +31,9 @@ export class MySQLStorage implements IStorage {
         location TEXT NOT NULL DEFAULT 'Abuja',
         cost_per_kwh DECIMAL(10,2) NOT NULL DEFAULT 225.00,
         appliances JSON NOT NULL DEFAULT (JSON_ARRAY()),
+        customer_name TEXT,
+        customer_email TEXT,
+        customer_phone TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
@@ -54,8 +57,11 @@ export class MySQLStorage implements IStorage {
       id: calc.id,
       name: calc.name,
       location: calc.location,
-      costPerKwh: parseFloat(calc.cost_per_kwh.toString()),
+      costPerKwh: calc.cost_per_kwh.toString(),
       appliances: JSON.parse(calc.appliances || '[]'),
+      customerName: calc.customer_name,
+      customerEmail: calc.customer_email,
+      customerPhone: calc.customer_phone,
       createdAt: calc.created_at?.toISOString() || null,
     };
   }
@@ -70,8 +76,11 @@ export class MySQLStorage implements IStorage {
       id: calc.id,
       name: calc.name,
       location: calc.location,
-      costPerKwh: parseFloat(calc.cost_per_kwh.toString()),
+      costPerKwh: calc.cost_per_kwh.toString(),
       appliances: JSON.parse(calc.appliances || '[]'),
+      customerName: calc.customer_name,
+      customerEmail: calc.customer_email,
+      customerPhone: calc.customer_phone,
       createdAt: calc.created_at?.toISOString() || null,
     }));
   }
@@ -83,14 +92,17 @@ export class MySQLStorage implements IStorage {
     const appliancesJson = JSON.stringify(insertCalculation.appliances || []);
 
     await this.connection.execute(
-      `INSERT INTO calculations (id, name, location, cost_per_kwh, appliances) 
-       VALUES (?, ?, ?, ?, ?)`,
+      `INSERT INTO calculations (id, name, location, cost_per_kwh, appliances, customer_name, customer_email, customer_phone) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         id,
         insertCalculation.name,
         insertCalculation.location || 'Abuja',
         insertCalculation.costPerKwh || 225.00,
         appliancesJson,
+        insertCalculation.customerName || null,
+        insertCalculation.customerEmail || null,
+        insertCalculation.customerPhone || null,
       ]
     );
 
@@ -123,6 +135,18 @@ export class MySQLStorage implements IStorage {
     if (updates.appliances !== undefined) {
       fields.push('appliances = ?');
       values.push(JSON.stringify(updates.appliances));
+    }
+    if (updates.customerName !== undefined) {
+      fields.push('customer_name = ?');
+      values.push(updates.customerName);
+    }
+    if (updates.customerEmail !== undefined) {
+      fields.push('customer_email = ?');
+      values.push(updates.customerEmail);
+    }
+    if (updates.customerPhone !== undefined) {
+      fields.push('customer_phone = ?');
+      values.push(updates.customerPhone);
     }
 
     if (fields.length === 0) return existing;
@@ -173,6 +197,5 @@ export function createMySQLConfig(): mysql.ConnectionOptions {
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_NAME || 'vectis_energy',
     connectTimeout: 30000,
-    acquireTimeout: 30000,
   };
 }

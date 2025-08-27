@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2, Tv, Snowflake, Laptop, Lightbulb } from "lucide-react";
+import { Plus, Trash2, Tv, Snowflake, Laptop, Lightbulb, Settings, Monitor } from "lucide-react";
 import { type Appliance } from "@shared/schema";
 import { getAllApplianceOptions, applianceOptions } from "@/data/appliances";
 import { calculateApplianceConsumption, formatCurrency, formatNumber } from "@/lib/calculations";
@@ -78,7 +78,7 @@ export function ApplianceTable({ appliances, costPerKwh, onAppliancesChange }: A
         </CardHeader>
         <CardContent>
           {/* Quick Add Popular Appliances */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-4">
             <Button
               variant="outline"
               className="p-3 h-auto flex-col space-y-1"
@@ -114,6 +114,24 @@ export function ApplianceTable({ appliances, costPerKwh, onAppliancesChange }: A
             >
               <Lightbulb className="w-5 h-5 text-muted-foreground" />
               <span className="text-xs">LED Lights</span>
+            </Button>
+            <Button
+              variant="outline"
+              className="p-3 h-auto flex-col space-y-1"
+              onClick={() => quickAddAppliance("Straight Sewing Machine", 370)}
+              data-testid="button-quick-add-sewing"
+            >
+              <Settings className="w-5 h-5 text-muted-foreground" />
+              <span className="text-xs">Sewing Machine</span>
+            </Button>
+            <Button
+              variant="outline"
+              className="p-3 h-auto flex-col space-y-1"
+              onClick={() => quickAddAppliance("Desktop Computer", 250)}
+              data-testid="button-quick-add-desktop"
+            >
+              <Monitor className="w-5 h-5 text-muted-foreground" />
+              <span className="text-xs">Desktop PC</span>
             </Button>
           </div>
 

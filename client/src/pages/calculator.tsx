@@ -8,6 +8,10 @@ import { SettingsPanel } from "@/components/settings-panel";
 import { ApplianceTable } from "@/components/appliance-table";
 import { SummaryDashboard } from "@/components/summary-dashboard";
 import { AnalysisCards } from "@/components/analysis-cards";
+import { CustomerInfoForm } from "@/components/customer-info-form";
+import { useToast } from "@/hooks/use-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function Calculator() {
   const [location, setLocation] = useState("Abuja");
@@ -18,15 +22,26 @@ export default function Calculator() {
       id: `default-${index}`,
     }))
   );
+  const [customerInfo, setCustomerInfo] = useState({
+    customerName: undefined as string | undefined,
+    customerEmail: undefined as string | undefined,
+    customerPhone: undefined as string | undefined,
+  });
+  const [customerFormCollapsed, setCustomerFormCollapsed] = useState(false);
+
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   // Calculate totals whenever appliances or cost changes
   const totals = calculateTotals(appliances, costPerKwh);
 
   const handleExport = () => {
     const data = {
+      name: `Energy Calculation - ${location}`,
       location,
       costPerKwh,
       appliances,
+      customerInfo,
       totals,
       timestamp: new Date().toISOString(),
     };
@@ -40,9 +55,48 @@ export default function Calculator() {
     URL.revokeObjectURL(url);
   };
 
+  const saveMutation = useMutation({
+    mutationFn: async (calculationData: any) => {
+      const response = await fetch("/api/calculations", {
+        method: "POST",
+        body: JSON.stringify(calculationData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Calculation Saved",
+        description: "Your energy calculation has been saved successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/calculations"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Save Failed",
+        description: error.message || "Failed to save calculation. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleSave = () => {
-    // TODO: Implement save functionality with backend
-    console.log('Save calculation:', { location, costPerKwh, appliances });
+    const calculationData = {
+      name: `Energy Calculation - ${location} - ${new Date().toLocaleDateString()}`,
+      location,
+      costPerKwh: costPerKwh.toString(),
+      appliances,
+      customerName: customerInfo.customerName || undefined,
+      customerEmail: customerInfo.customerEmail || undefined,
+      customerPhone: customerInfo.customerPhone || undefined,
+    };
+    
+    saveMutation.mutate(calculationData);
   };
 
   return (
@@ -65,9 +119,13 @@ export default function Calculator() {
                 <Download className="w-4 h-4 mr-2" />
                 Export Results
               </Button>
-              <Button onClick={handleSave}>
+              <Button 
+                onClick={handleSave} 
+                disabled={saveMutation.isPending}
+                data-testid="button-save-calculation"
+              >
                 <Save className="w-4 h-4 mr-2" />
-                Save Calculation
+                {saveMutation.isPending ? "Saving..." : "Save Calculation"}
               </Button>
             </div>
           </div>
@@ -95,6 +153,18 @@ export default function Calculator() {
 
           {/* Main Calculator */}
           <div className="lg:col-span-3 space-y-6">
+            {/* Customer Information Form */}
+            <CustomerInfoForm
+              customerInfo={customerInfo}
+              onCustomerInfoChange={(info) => setCustomerInfo({
+                customerName: info.customerName,
+                customerEmail: info.customerEmail,
+                customerPhone: info.customerPhone,
+              })}
+              collapsed={customerFormCollapsed}
+              onToggleCollapse={() => setCustomerFormCollapsed(!customerFormCollapsed)}
+            />
+
             {/* Appliances Table */}
             <ApplianceTable
               appliances={appliances}
@@ -129,9 +199,13 @@ export default function Calculator() {
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
-          <Button className="flex-1" onClick={handleSave}>
+          <Button 
+            className="flex-1" 
+            onClick={handleSave}
+            disabled={saveMutation.isPending}
+          >
             <Save className="w-4 h-4 mr-2" />
-            Save
+            {saveMutation.isPending ? "Saving..." : "Save"}
           </Button>
         </div>
       </div>
