@@ -1,3 +1,4 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "../server/routes";
 import { serveStatic } from "../server/vite";
@@ -36,19 +37,24 @@ app.use((req, res, next) => {
   next();
 });
 
-(async () => {
-  await registerRoutes(app);
+let initialized = false;
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (!initialized) {
+    await registerRoutes(app);
 
-    res.status(status).json({ message });
-    throw err;
-  });
+    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+      const status = err.status || err.statusCode || 500;
+      const message = err.message || "Internal Server Error";
 
-  // Serve static files in production
-  serveStatic(app);
-})();
+      res.status(status).json({ message });
+    });
 
-export default app;
+    // Serve static files in production
+    serveStatic(app);
+    
+    initialized = true;
+  }
+
+  return app(req, res);
+}
