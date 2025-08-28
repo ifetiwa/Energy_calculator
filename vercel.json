@@ -1,9 +1,19 @@
 {
-  "buildCommand": "npm run build && mkdir -p server/public && cp -r dist/public/* server/public/",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/public",
+  "functions": {
+    "api/calculations.ts": {
+      "runtime": "@vercel/node@2.15.10"
+    }
+  },
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/api"
+      "source": "/api/calculations/:path*",
+      "destination": "/api/calculations"
+    },
+    {
+      "source": "/api/calculations",
+      "destination": "/api/calculations"
     }
   ]
 }
